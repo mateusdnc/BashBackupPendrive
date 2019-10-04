@@ -13,12 +13,13 @@ loop=1
 while [ $loop = 1 ] 
 do
 
+
 #variaveis configuráveis 
 localbackup="/home/mateus/ETEC/" #local onde os arquivos do pendrive serão sincronizados
 uid="184F39D627BEE814" #uuid do dispositivo
 adicionar_pasta="ETEC" #pasta na raiz do pendrive que sera sincronizado 
-tempodeverificacao=250   #(em segundos)
-notificacoes= true #true = com notificações,false = o script não enviara notificações.
+tempoicacao=250   #(em segundos)
+notificacoes= true #deveriftrue = com notificações,false = o script não enviara notificações.
 
 
 #variaveis fixas(não mexer)
@@ -34,7 +35,7 @@ if [ $verificapendrive = $uid ]
 then
 
 echo "Pendrive encontrado"
-
+$(notify-send "Pendrive encontrado")
 
 
 #verifica se as notificações estão ativadas
@@ -49,14 +50,14 @@ caminho=$mount_point_pendrive/$adicionar_pasta/* #monta um caminho de acordo com
 sincroniza=$(rsync -uahivP --delete $caminho $localbackup)
 
 
-#informa o caminho do pendrive
-echo "Caminho do pendrive: $caminho"
-echo "Começando a sincronização"
+
+
 
 		if [ $notificacoes = true ]
 		then
 		$(notify-send "Backup Sincronizado")
 		fi 
+
 
 sleep $tempodeverificacao
 
