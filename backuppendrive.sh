@@ -30,8 +30,6 @@ if [ $verificapendrive = $uid ]
 then
 
 	echo "Pendrive encontrado"
-	$(notify-send "Pendrive encontrado")
-
 
 	if [ $notificacoes = true ] #verifica se as notificações estão ativadas,se estiver,envia notificações
 	then
