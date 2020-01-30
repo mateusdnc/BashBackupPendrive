@@ -12,8 +12,8 @@ while [ $loop = 1 ]
 do
 
 #variaveis configuráveis 
-localbackup="/home/mateus/ETEC/" #local onde os arquivos do pendrive serão sincronizados
-uid="6BF22295348BDB4B" #uuid do dispositivo
+localbackup="/home/mateus/ETEC/" #caminho destino onde os arquivos do pendrive serão sincronizados
+uid="6BF22295348BDB4B" #uuid do dispositivo(para encontrar do seu dispositivo use lsblk --output UUID,MOUNTPOINT)
 adicionar_pasta="ETEC" #pasta na raiz do pendrive que sera sincronizado 
 tempodeverificacao=250   #(em segundos)
 notificacoes= false #true = com notificações,false = o script não enviara notificações.
