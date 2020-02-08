@@ -1,5 +1,6 @@
 from tkinter import *
-
+from tkinter import ttk
+import subprocess 
 root = Tk()
 
 class Application(Frame):
@@ -24,14 +25,19 @@ class Application(Frame):
 
         #Containers Seção 2
 
-        container2 = Frame(master,height = 200,borderwidth=2, relief="groove")
-       # container2.place(relx=0.5, rely=0.5, anchor=CENTER)
-        container2.pack (fill=X,padx=5)
+    #     container2 = Frame(master,height = 200,borderwidth=2, relief="groove")
+    #    # container2.place(relx=0.5, rely=0.5, anchor=CENTER)
+    #     container2.pack (fill=X,padx=5)
 
         #Containers Seção 3
+        container3 = Frame(master,height = 200,borderwidth=2, relief="groove")
+        container3.pack (fill=X,padx=5,pady=5)
+      
+      
+        #Containers Seção 4
 
-        container5 = Frame(master)
-        container5.pack (pady=10)
+        # container4 = Frame(master)
+        # container4.pack (pady=10)
 
         #Texts
         text1 = Label(container1_child1, text="Diretorios",)
@@ -45,8 +51,8 @@ class Application(Frame):
 
         ####
 
-        text3 = Label(container2, text="Opções")
-        text3.pack ()
+        # text3 = Label(container2, text="Opções")
+        # text3.pack ()
 
 
 
@@ -57,25 +63,61 @@ class Application(Frame):
         localpendrive = Entry(container1_child2)
         localpendrive.pack (side=RIGHT)
 
+
+        #ComboBox,Text | Container 3
+
+        text4 = Label(container3,text="Dispositivo")
+        text4.pack ()
+        dispositivo=[]
+        # numerodispositivos = subprocess.call("lsblk --output LABEL | awk 'NF' | wc -l",shell=True)
+        numerodispositivos=3
+        print("numerodispositivos",numerodispositivos)
+        while (numerodispositivos>0):
+            print("numerodispositivos",numerodispositivos)
+            comando="lsblk --output LABEL | awk 'NF' | sed -n {}p".format(numerodispositivos)
+            
+           
+            iii=0
+            device_name = subprocess.Popen(comando, shell=True, stdout=subprocess.PIPE).stdout.read()
+            
+        
+            dispositivo.insert(iii, device_name)
+            numerodispositivos-=1
+            iii+=1
+
+       # label[]=subprocess.call(" lsblk --output LABEL,UUID,MOUNTPOINT | awk 'NF'",shell=True)
+
+        listadispositivos = ttk.Combobox (container3,values=dispositivo)
+        listadispositivos.pack ()                            
+
         #Radio Buttons
         rb1 = 0
         rb2 = 0
         rb3 = 0
 
-        radiobutton1= Radiobutton(container2,text="Excluir(arquivos exitentes)",variable=rb1, value=1)
-        radiobutton1.pack ()
+       # def radiobutton():
 
-        radiobutton2= Radiobutton(container2,text="Recursivo",variable=rb2, value=1)
-        radiobutton2.pack ()
+        # radiobutton1= Checkbutton(container2,text="Excluir(arquivos exitentes)",variable=rb1)
+        # radiobutton1.pack ()
 
-        radiobutton3= Radiobutton(container2,text="Atualizar(arquivos exitentes)",variable=rb3, value=1)
-        radiobutton3.pack ()
+        # radiobutton2= Checkbutton(container2,text="Recursivo",variable=rb1)
+        # radiobutton2.pack ()
+
+        # radiobutton3= Checkbutton(container2,text="Atualizar(arquivos exitentes)",variable=rb1)
+        # radiobutton3.pack ()
 
         #Buttons
 
-        buttonsalvar = Button(text="Salvar")
+        def callback():
+            return_code = subprocess.Popen("ifconfig", shell=True, stdout=subprocess.PIPE).stdout.read()
+            
+
+            print(return_code)
+
+        buttonsalvar = Button(text="Salvar",command=callback)
         buttonsalvar.pack ()
 
+        
 
 
 window_height = 300

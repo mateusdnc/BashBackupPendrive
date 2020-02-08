@@ -48,7 +48,7 @@ then
 	fi 
 
 
-	mount_point_pendrive=$(lsblk --output UUID,MOUNTPOINT | grep "$uid" | awk '{print $2}') #localiza onde é o ponto de montagem do dispositivo
+	mount_point_pendrive=$(lsblk --output UUID,MOUNTPOINT | grep "$uid" |  	) #localiza onde é o ponto de montagem do dispositivo
 	caminho=$mount_point_pendrive/$adicionar_pasta/* #monta um caminho de acordo com as variaveis mount_point_drive e adicionar_pasta
 	sincroniza=$(rsync -uahivP --delete $caminho $localbackup) #faz as sincronização dos arquivos
 
