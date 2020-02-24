@@ -81,22 +81,25 @@ class Application(Frame):
         dispositivo=[]
         #numerodispositivos = subprocess.call("lsblk --output LABEL | awk 'NF' | wc -l",shell=True)
 
-        numerodispositivos = s.("lsblk --output LABEL | awk 'NF' | wc -l").run()
-
+        numerodispositivos = s.sudo("lsblk --output LABEL | awk 'NF' | wc -l").run()
+        numeroint = (numerodispositivos).stdout
+        numeroint = int(numeroint[0])
         #numerodispositivos = subprocess.Popen("lsblk --output LABEL | awk 'NF' | wc -l")
       
-        print("numerodispositivos",numerodispositivos)
-        while (numerodispositivos>0):
-            print("numerodispositivos",numerodispositivos)
-            comando="lsblk --output LABEL | awk 'NF' | sed -n {}p".format(numerodispositivos)
+        
+
+        print("numerodispositivos",numeroint)
+        while (numeroint>0):
+            print("numerodispositivos",numeroint)
+            comando="lsblk --output LABEL | awk 'NF' | sed -n {}p".format(numeroint)
                     
                 
             iii=0
-            device_name = subprocess.Popen(comando, shell=True, stdout=subprocess.PIPE).stdout.read()
+            device_name = s.sudo(comando).run().stdout
                     
                 
             dispositivo.insert(iii, device_name)
-            numerodispositivos-=1
+            numeroint-=1
             iii+=1
     
 
@@ -122,10 +125,17 @@ class Application(Frame):
         #Buttons
 
         def callback():
-            return_code = subprocess.Popen("ifconfig", shell=True, stdout=subprocess.PIPE).stdout.read()
+            dispositivo_selecionado=(listadispositivos.get())
+            caminho_backup_local= localbackup.get()
+            caminho_pendrive = localpendrive.get()
+
+            
+            uid=s.sudo("lsblk --output LABEL,UUID | grep ",dispositivo_selecionado," | awk '{print $2}'").run()
+            print("uid",uid)   
+
             
 
-            print(return_code)
+            
 
         buttonsalvar = Button(text="Salvar",command=callback)
         buttonsalvar.pack ()
@@ -133,7 +143,7 @@ class Application(Frame):
         
 
 
-window_height = 300
+window_height = 200
 window_width = 350
 
 screen_width = root.winfo_screenwidth()
@@ -145,4 +155,5 @@ y_cordinate = int((screen_height/2) - (window_height/2))
 root.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
 
 Application(root)
+root.title("BashBackup")
 root.mainloop()
