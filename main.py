@@ -1,7 +1,14 @@
 from tkinter import *
 from tkinter import ttk
-import subprocess 
+import subprocess
+from sultan.api import Sultan
+s = Sultan() 
 root = Tk()
+
+
+    
+
+
 
 class Application(Frame):
     def __init__(self, master=None):
@@ -68,24 +75,30 @@ class Application(Frame):
 
         text4 = Label(container3,text="Dispositivo")
         text4.pack ()
+        
+       # label[]=subprocess.call(" lsblk --output LABEL,UUID,MOUNTPOINT | awk 'NF'",shell=True)
+
         dispositivo=[]
-        # numerodispositivos = subprocess.call("lsblk --output LABEL | awk 'NF' | wc -l",shell=True)
-        numerodispositivos=3
+        #numerodispositivos = subprocess.call("lsblk --output LABEL | awk 'NF' | wc -l",shell=True)
+
+        numerodispositivos = s.("lsblk --output LABEL | awk 'NF' | wc -l").run()
+
+        #numerodispositivos = subprocess.Popen("lsblk --output LABEL | awk 'NF' | wc -l")
+      
         print("numerodispositivos",numerodispositivos)
         while (numerodispositivos>0):
             print("numerodispositivos",numerodispositivos)
             comando="lsblk --output LABEL | awk 'NF' | sed -n {}p".format(numerodispositivos)
-            
-           
+                    
+                
             iii=0
             device_name = subprocess.Popen(comando, shell=True, stdout=subprocess.PIPE).stdout.read()
-            
-        
+                    
+                
             dispositivo.insert(iii, device_name)
             numerodispositivos-=1
             iii+=1
-
-       # label[]=subprocess.call(" lsblk --output LABEL,UUID,MOUNTPOINT | awk 'NF'",shell=True)
+    
 
         listadispositivos = ttk.Combobox (container3,values=dispositivo)
         listadispositivos.pack ()                            

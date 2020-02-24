@@ -11,90 +11,59 @@ loop=1
 while [ $loop = 1 ] 
 do
 
-#variaveis configuráveis 
-localbackup="/home/mateus/ETEC/" #caminho destino onde os arquivos do pendrive serão sincronizados
-uid="6BF22295348BDB4B" #uuid do dispositivo(para encontrar do seu dispositivo use lsblk --output UUID,MOUNTPOINT)
-adicionar_pasta="ETEC" #pasta na raiz do pendrive que sera sincronizado 
-tempodeverificacao=250   #(em segundos)
-notificacoes= false #true = com notificações,false = o script não enviara notificações.
-repetirnotificacao = false #verifica se é pra repetir notificações ou avisar apenas um vez
-repetir= 0
+	#variaveis configuráveis 
+	localbackup="/home/mateus/Área\ de\ trabalho/ETEC" #caminho destino onde os arquivos do pendrive serão sincronizados
+	uid="E6AD-E3CD" #uuid do dispositivo(para encontrar do seu dispositivo use lsblk --output UUID,MOUNTPOINT)
+	adicionar_pasta="ETEC" #pasta na raiz do pendrive que sera sincronizado 
+	tempodeverificacao=250   #(em segundos)
 
 
-#variaveis fixas(não mexer)
-verificapendrive=$(lsblk --output UUID,MOUNTPOINT | grep "$uid" | awk '{print $1}') 
+	#variaveis fixas(não mexer)
+	verificapendrive=$(lsblk --output UUID,MOUNTPOINT | grep "$uid" | awk '{print $1}') 
+	data=$(date)
 
-#confirmando
-echo "Local do backup: $localbackup"
-echo "UUID: $uid"
+	#confirmando
+	echo "Local do backup: $localbackup"
+	echo "UUID: $uid"
+	echo "Data: $data"
 
-#verifica se o pendrive esta conectado
-if [ $verificapendrive = $uid ]
-then
+	#verifica se o pendrive esta conectado
+		if [ $verificapendrive = $uid ]
+			then
 
-	echo "Pendrive encontrado"
-
-
-	if [ $notificacoes = true ] #verifica se as notificações estão ativadas,se estiver,envia notificações
-	then
-	
-	$(notify-send "Pendrive encontrado")
-
-	if [ $repetirnotificacao = true ]
-	then
-	$repetir = 1
-	fi
-
-	fi 
+			echo "Pendrive encontrado"
 
 
-	mount_point_pendrive=$(lsblk --output UUID,MOUNTPOINT | grep "$uid" |  	mount_point_pendrive=$(lsblk --output UUID,MOUNTPOINT | grep "$uid" | awk '{print $2}') #localiza onde é o ponto de montagem do dispositivo 	) #localiza onde é o ponto de montagem do dispositivo
-	caminho=$mount_point_pendrive/$adicionar_pasta/* #monta um caminho de acordo com as variaveis mount_point_drive e adicionar_pasta
-	sincroniza=$(rsync -uahivP --delete $caminho $localbackup) #faz as sincronização dos arquivos
-
-	echo "Caminho do pendrive: $caminho"
-	echo "Começando a sincronização"
-		
-	if [ $notificacoes = true ] #verifica se as notificações estão ativadas,se estiver,envia notificações
-	then
-
-	if [ $repetir = 1 ]
-	then
-	$(notify-send "Começando a sincronização")
-	fi
-
-	fi
-
-		###########
-		$sincroniza 
-		###########
+			log+="Backup $data\n"
 
 
-	if [ $notificacoes = true ]
-	then
+			mount_point_pendrive=$(lsblk --output UUID,MOUNTPOINT | grep "$uid" | awk '{print $2}') #localiza onde é o ponto de montagem do dispositivo
+			caminho=($mount_point_pendrive/$adicionar_pasta) #monta um caminho de acordo com as variaveis mount_point_drive e adicionar_pasta
+			
+			log+="Alterações:\n"
+			sincroniza=$(rsync -ruati  $caminho $localbackup) #faz as sincronização dos arquivos
 
-	if [ $repetir = 1 ]
-	then
-	$(notify-send "Backup Sincronizado")
-	fi 
-	fi
+			echo "Caminho do pendrive: $caminho"
+			echo "Começando a sincronização"
+				
+			
 
-	if [ $notificacoes = true ] #verifica se as notificações estão ativadas,se estiver,envia notificações
-	then
-	if [ $repetir = 1 ]
-	then
-	$(notify-send "Sincronização finalizada")
-	fi 
-	fi
+				###########
+			log+=$sincroniza 
+				###########
 
-sleep $tempodeverificacao
 
-else
+			$(rm -rf $localbackup/log.txt)
+			echo -e $log >> $localbackup/log.txt
 
-echo "Pendrive não encontrado"
+			else
 
-sleep $tempodeverificacao
+			echo "Pendrive não encontrado"
 
-fi 
+
+		fi 
+
+	sleep $tempodeverificacao
+
 
 done
